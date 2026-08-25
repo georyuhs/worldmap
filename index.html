@@ -3,23 +3,38 @@
 <title>나라야, 가라앉지마! 🌏 세계지도 서바이벌</title>
 <style>
 :root{
-  --ink:#FFF8EC;          /* 배경 · 크림 */
-  --sea:#BFE6FA;          /* 바다 · 하늘색 */
-  --sea-2:#D8EFFB;        /* 격자선 */
-  --land:#FFDE8A;         /* 육지(출제 범위) · 버터색 */
-  --land-2:#FFF1CE;       /* 출제범위 밖 육지 */
-  --border:#3B4A5C;       /* 국경선 */
-  --paper:#33404E;        /* 본문 글자 */
-  --dim:#8592A6;
-  --amber:#FF9B57;
-  --mint:#33C98A;
-  --coral:#FF6B6B;
-  --line:rgba(59,74,92,.12);
+  /* ── 종이·잉크 ─────────────────────────────── */
+  --ink:#F4F1E9;          /* 화면 배경 · 따뜻한 종이 */
   --panel:#FFFFFF;
+  --paper:#1E2E3C;        /* 본문 글자 · 깊은 남색 */
+  --dim:#77899B;
+  --line:rgba(30,46,60,.10);
+  --line-2:rgba(30,46,60,.18);
+
+  /* ── 바다 ──────────────────────────────────── */
+  --sea:#CFE3EC;          /* 바다 · 은은한 빙하빛 */
+  --sea-2:#B6D5E3;        /* 경위선 */
+  --sea-deep:#173A4C;     /* 낙하 이름표·토스트 바탕 */
+
+  /* ── 육지 : 클릭 가능 여부를 색으로 확실히 구분 ── */
+  --land:#F3BE5F;         /* ★ 출제 범위(클릭 가능) · 선명한 허니 */
+  --land-hi:#FFD584;      /* 출제 범위 hover */
+  --land-2:#E5DED1;       /* 출제 범위 밖(클릭 불가) · 채도 뺀 모래빛 */
+  --border-on:#3D5162;    /* 출제 범위 국경 — 진하게 */
+  --border-off:#BCB1A0;   /* 범위 밖 국경 — 흐리게 */
+  --border:var(--border-on);
+
+  /* ── 강조색 ─────────────────────────────────── */
+  --amber:#DE6E3C;        /* 주 액션 · 테라코타 */
+  --amber-soft:#FCEADD;
+  --mint:#12A67B;         /* 정답 */
+  --coral:#D9483F;        /* 오답 */
+  --reveal:#3C5A70;       /* 놓친 나라 공개 */
+
   --font:'Pretendard','Pretendard Variable',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
   --mono:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;
-  --shadow:0 4px 14px rgba(80,90,120,.10);
-  --shadow-lg:0 10px 28px rgba(80,90,120,.16);
+  --shadow:0 2px 10px rgba(30,46,60,.07);
+  --shadow-lg:0 12px 30px rgba(30,46,60,.13);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -35,151 +50,180 @@ button:focus-visible,.card:focus-visible,.chipbtn:focus-visible{outline:3px soli
 
 /* ───────── 홈 ───────── */
 #home{overflow-y:auto;overflow-x:hidden;background:
-  radial-gradient(60% 40% at 12% 0%,rgba(255,222,138,.35),transparent 60%),
-  radial-gradient(50% 35% at 100% 10%,rgba(191,230,250,.55),transparent 60%),
+  radial-gradient(58% 38% at 8% -4%,rgba(243,190,95,.22),transparent 62%),
+  radial-gradient(52% 34% at 102% 4%,rgba(180,214,229,.45),transparent 62%),
   var(--ink)}
 .wrap{width:min(880px,100%);margin:0 auto;padding:clamp(22px,5vw,40px) clamp(16px,5vw,28px) 72px}
-.eyebrow{font-size:12px;letter-spacing:.16em;color:#E08A2E;font-weight:800;margin-bottom:10px;
-  background:#FFEAC2;display:inline-block;padding:4px 10px;border-radius:999px}
-h1{font-size:clamp(26px,7vw,42px);font-weight:800;letter-spacing:-.02em;line-height:1.18}
+.eyebrow{font-size:11.5px;letter-spacing:.16em;color:#B4551F;font-weight:800;margin-bottom:10px;
+  background:var(--amber-soft);display:inline-block;padding:5px 11px;border-radius:999px}
+h1{font-size:clamp(26px,7vw,42px);font-weight:800;letter-spacing:-.025em;line-height:1.18}
 h1 em{font-style:normal;color:var(--amber)}
 .sub{color:var(--dim);margin-top:12px;font-size:14.5px;line-height:1.6;max-width:60ch}
-.rule{height:2px;background:var(--line);margin:26px 0 20px;border-radius:2px}
+.rule{height:1px;background:var(--line-2);margin:26px 0 20px}
 .grid{display:grid;grid-template-columns:1fr;gap:14px}
 @media(min-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
 .card{
-  position:relative;text-align:left;background:var(--panel);border:2px solid var(--line);
-  border-radius:20px;padding:18px 18px 16px;transition:transform .18s ease,border-color .18s,box-shadow .18s;
-  display:flex;flex-direction:column;gap:10px;min-height:236px;box-shadow:var(--shadow);
+  position:relative;text-align:left;background:var(--panel);border:1px solid var(--line-2);
+  border-radius:18px;padding:16px 16px 14px;transition:transform .18s ease,border-color .18s,box-shadow .18s;
+  display:flex;flex-direction:column;gap:9px;min-height:236px;box-shadow:var(--shadow);
 }
-.card:hover{transform:translateY(-3px) scale(1.01);border-color:var(--amber);box-shadow:var(--shadow-lg)}
-.card.sel{border-color:var(--amber);background:#FFF7E9;box-shadow:var(--shadow-lg)}
-.card .no{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.1em;font-weight:700}
-.card h3{font-size:21px;font-weight:800;letter-spacing:-.01em}
+.card:hover{transform:translateY(-3px);border-color:var(--amber);box-shadow:var(--shadow-lg)}
+.card.sel{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-soft),var(--shadow-lg)}
+.card .no{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.12em;font-weight:700}
+.card h3{font-size:21px;font-weight:800;letter-spacing:-.015em}
 .card .thumb{flex:1;min-height:118px;display:flex;align-items:center;justify-content:center;
-  background:var(--sea-2);border-radius:12px;overflow:hidden}
+  background:var(--sea);border-radius:12px;overflow:hidden;border:1px solid rgba(30,46,60,.06)}
 .card .thumb svg{width:100%;height:128px;display:block}
 .card .meta{font-size:12.5px;color:var(--dim);line-height:1.5}
 .card .n{color:var(--paper);font-family:var(--mono);font-weight:700}
 
 /* 설정 패널 */
-#setup{display:none;margin-top:18px;background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--shadow)}
+#setup{display:none;margin-top:18px;background:var(--panel);border:1px solid var(--line-2);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
 #setup.on{display:block;animation:rise .25s ease}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .set-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:6px}
-.set-head h2{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.set-head h2{font-size:22px;font-weight:800;letter-spacing:-.02em}
 .set-head span{color:var(--dim);font-size:13px}
-.lbl{font-size:11.5px;letter-spacing:.12em;color:var(--dim);font-weight:800;margin:18px 0 9px}
-.chips{display:flex;flex-wrap:wrap;gap:9px}
+.lbl{font-size:11px;letter-spacing:.14em;color:var(--dim);font-weight:800;margin:18px 0 9px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
 .chipbtn{
-  border:2px solid var(--line);background:var(--ink);color:var(--dim);border-radius:999px;
+  border:1px solid var(--line-2);background:var(--panel);color:var(--dim);border-radius:999px;
   padding:11px 16px;font-size:14px;font-weight:700;transition:.15s;min-height:44px;
 }
 .chipbtn:hover{border-color:var(--amber);color:var(--paper)}
-.chipbtn.on{background:var(--amber);border-color:var(--amber);color:#fff}
-.chipbtn small{font-family:var(--mono);opacity:.75;margin-left:5px}
-.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px;align-items:center}
-.btn{border-radius:14px;padding:15px 24px;font-weight:800;font-size:16px;border:2px solid var(--line);
-  background:var(--panel);transition:.15s;min-height:50px;box-shadow:var(--shadow)}
+.chipbtn.on{background:var(--amber);border-color:var(--amber);color:#fff;box-shadow:0 2px 8px rgba(222,110,60,.28)}
+.chipbtn small{font-family:var(--mono);opacity:.7;margin-left:5px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
+.btn{border-radius:13px;padding:14px 22px;font-weight:800;font-size:15.5px;border:1px solid var(--line-2);
+  background:var(--panel);transition:.15s;min-height:50px}
 .btn:hover{border-color:var(--amber);transform:translateY(-1px)}
-.btn.primary{background:var(--amber);color:#fff;border-color:var(--amber)}
+.btn.primary{background:var(--amber);color:#fff;border-color:var(--amber);box-shadow:0 3px 12px rgba(222,110,60,.3)}
 .btn.primary:hover{filter:brightness(1.06)}
-.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 .count{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim);font-weight:700}
 .count b{color:var(--amber);font-size:19px}
 
 /* 로딩 / 오류 */
-#boot{padding:14px 16px;border:2px solid var(--line);border-radius:14px;background:var(--panel);font-size:13.5px;color:var(--dim);display:flex;gap:10px;align-items:center;margin-bottom:18px;box-shadow:var(--shadow)}
+#boot{padding:13px 15px;border:1px solid var(--line-2);border-radius:13px;background:var(--panel);font-size:13.5px;color:var(--dim);display:flex;gap:10px;align-items:center;margin-bottom:18px}
 #boot .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
-#boot.err{border-color:rgba(255,107,94,.5)}
+#boot.err{border-color:rgba(217,72,63,.45)}
 #boot.err .dot{background:var(--coral);animation:none}
 #boot.ok{display:none}
 #boot input{display:none}
 
 /* ───────── 게임 ───────── */
 #play{background:var(--ink)}
-.hud{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:2px solid var(--line);background:var(--panel);flex-wrap:wrap;box-shadow:var(--shadow)}
-.hud .name{font-weight:800;font-size:14px;letter-spacing:-.01em}
+.hud{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--line-2);background:var(--panel);flex-wrap:wrap}
+.hud .name{font-weight:800;font-size:14px;letter-spacing:-.015em}
 .hud .name small{display:block;font-weight:600;color:var(--dim);font-size:10.5px;letter-spacing:0}
 .stat{font-family:var(--mono);font-size:11px;color:var(--dim);display:flex;align-items:baseline;gap:4px}
 .stat b{font-size:17px;color:var(--paper);font-weight:800}
 .stat.combo b{color:var(--amber)}
 .lives{letter-spacing:2px;font-size:14px;color:var(--coral)}
 .hud .sp{flex:1}
-.iconbtn{border:2px solid var(--line);border-radius:12px;padding:10px 13px;font-size:14px;font-weight:700;color:var(--paper);
-  min-height:44px;background:var(--ink)}
+.iconbtn{border:1px solid var(--line-2);border-radius:11px;padding:10px 13px;font-size:14px;font-weight:700;color:var(--paper);
+  min-height:44px;background:var(--panel);transition:.15s}
 .iconbtn:hover{border-color:var(--amber)}
 
 #stage{position:relative;flex:1;overflow:hidden;touch-action:none}
 #stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
-.mapctl{position:absolute;left:10px;top:10px;z-index:5;display:none;flex-direction:column;gap:8px}
-.mapctl button{width:44px;height:44px;border-radius:12px;background:var(--panel);border:2px solid var(--line);
-  box-shadow:var(--shadow);font-size:19px;font-weight:800;color:var(--paper);line-height:1;
-  display:flex;align-items:center;justify-content:center}
-.mapctl button:hover{border-color:var(--amber)}
-.mapctl button:active{transform:scale(.93)}
-.peekbar{display:none;gap:10px;justify-content:center;flex-wrap:wrap;padding:14px 12px;
-  border-top:2px solid var(--line);background:var(--panel)}
-.cpath{stroke:var(--border);stroke-width:.9;stroke-linejoin:round;vector-effect:non-scaling-stroke;transition:fill .12s}
-.cpath.target{fill:var(--land)}
-.cpath.other{fill:var(--land-2)}
-#stage.live .cpath.target:hover{fill:#FFEFC0}
-.cpath.hit-ok{fill:var(--mint)!important}
-.cpath.hit-no{fill:var(--coral)!important}
-.cpath.reveal{fill:var(--amber)!important}
-.dot{stroke:var(--border);stroke-width:1.4;fill:var(--land)}
-.dot.other{fill:var(--land-2)}
+.mapctl{position:absolute;left:12px;top:12px;z-index:5;display:none;flex-direction:column;gap:6px;
+  background:rgba(255,255,255,.96);backdrop-filter:blur(6px);padding:5px;border-radius:14px;
+  border:1px solid var(--line-2);box-shadow:var(--shadow)}
+.mapctl button{width:40px;height:40px;border-radius:10px;background:transparent;border:none;
+  font-size:19px;font-weight:800;color:var(--paper);line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:.12s}
+.mapctl button:hover{background:var(--amber-soft);color:#B4551F}
+.mapctl button:active{transform:scale(.9)}
+
+/* 지도 · 나라 색 (클릭 가능/불가 구분) */
+.cpath{stroke-linejoin:round;vector-effect:non-scaling-stroke;transition:fill .12s}
+.cpath.other{fill:var(--land-2);stroke:var(--border-off);stroke-width:.75}
+.cpath.target{fill:var(--land);stroke:var(--border-on);stroke-width:1.15}
+#stage.live .cpath.target{cursor:pointer}
+#stage.live .cpath.target:hover{fill:var(--land-hi)}
+.cpath.hit-ok{fill:var(--mint)!important;stroke:#0B7657!important}
+.cpath.hit-no{fill:var(--coral)!important;stroke:#9E2F28!important}
+.cpath.reveal{fill:var(--reveal)!important;stroke:#22394A!important}
+.dot{stroke:var(--border-on);stroke-width:1.4;fill:var(--land)}
+.dot.other{fill:var(--land-2);stroke:var(--border-off)}
 .dothit{fill:transparent;stroke:none;cursor:pointer}
-#stage.live .dot:hover{fill:#fff}
-.dot.hit-ok{fill:var(--mint)!important}.dot.hit-no{fill:var(--coral)!important}.dot.reveal{fill:var(--amber)!important}
-.grat{stroke:var(--sea-2);stroke-width:.8;fill:none}
-.eqline{stroke:#E0782E;stroke-width:1.6;stroke-dasharray:6 4;fill:none;opacity:.85}
-.eqlabel{font-size:9.5px;font-weight:800;fill:#E0782E;letter-spacing:.04em;pointer-events:none}
-.leader{stroke:rgba(59,74,92,.5);stroke-width:.8;fill:none}
-.plabel{font-size:11px;font-weight:800;fill:#33404E;paint-order:stroke;stroke:rgba(255,255,255,.9);stroke-width:3px;pointer-events:none}
+#stage.live .dot:hover{fill:var(--land-hi)}
+.dot.hit-ok{fill:var(--mint)!important}.dot.hit-no{fill:var(--coral)!important}.dot.reveal{fill:var(--reveal)!important}
+.grat{stroke:var(--sea-2);stroke-width:.7;fill:none;opacity:.75}
+.eqline{stroke:#C8622A;stroke-width:1.3;stroke-dasharray:7 5;fill:none;opacity:.7}
+.eqlabel{font-size:9px;font-weight:800;fill:#C8622A;letter-spacing:.06em;pointer-events:none;opacity:.85}
+.leader{stroke:rgba(30,46,60,.32);stroke-width:.7;fill:none}
+.plabel-bg{fill:rgba(255,255,255,.94);stroke:rgba(30,46,60,.16);stroke-width:.7;
+  vector-effect:non-scaling-stroke;pointer-events:none}
+.plabel{font-size:11px;font-weight:700;fill:#25384A;letter-spacing:-.01em;pointer-events:none}
 
 /* 낙하 라벨 */
 #labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .chip{
   position:absolute;transform:translate(-50%,0);will-change:transform;
-  background:#33404E;border:1px solid rgba(255,155,87,.6);border-left:4px solid var(--amber);
-  border-radius:10px;padding:7px 13px 8px;text-align:center;box-shadow:0 6px 18px rgba(60,70,90,.25);
+  background:var(--sea-deep);border:1px solid rgba(255,255,255,.14);border-left:3px solid var(--amber);
+  border-radius:11px;padding:7px 14px 8px;text-align:center;box-shadow:0 8px 22px rgba(23,58,76,.28);
 }
-.chip b{display:block;font-size:clamp(15px,2.6vw,19px);font-weight:800;letter-spacing:-.01em;white-space:nowrap;color:#FFF8EC}
-.chip i{display:block;font-style:normal;font-size:10.5px;color:var(--amber);margin-top:2px;letter-spacing:.05em}
+.chip b{display:block;font-size:clamp(15px,2.6vw,19px);font-weight:800;letter-spacing:-.015em;white-space:nowrap;color:#F4F1E9}
+.chip i{display:block;font-style:normal;font-size:10.5px;color:#F0A272;margin-top:2px;letter-spacing:.05em}
 .chip::before{content:"";position:absolute;left:50%;bottom:100%;width:1px;height:min(46vh,340px);
-  background:linear-gradient(to top,rgba(255,155,87,.5),transparent);pointer-events:none}
-.chip::after{content:"";position:absolute;left:50%;top:100%;margin-left:-4px;border:4px solid transparent;border-top-color:rgba(255,155,87,.75)}
+  background:linear-gradient(to top,rgba(222,110,60,.45),transparent);pointer-events:none}
+.chip::after{content:"";position:absolute;left:50%;top:100%;margin-left:-4px;border:4px solid transparent;border-top-color:rgba(222,110,60,.7)}
 .chip.gone{transition:opacity .3s ease;opacity:0}
-.sealine{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,155,87,.6),transparent)}
+.sealine{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(222,110,60,.55),transparent)}
 .float{position:absolute;transform:translate(-50%,-50%);font-family:var(--mono);font-weight:800;font-size:17px;
-  pointer-events:none;animation:up 1s ease-out forwards}
+  pointer-events:none;animation:up 1s ease-out forwards;
+  text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 6px #fff,0 1px 2px rgba(255,255,255,.9)}
 @keyframes up{0%{opacity:1}100%{opacity:0;transform:translate(-50%,-160%)}}
-#toast{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);background:#33404E;color:#FFF8EC;
-  border:1px solid var(--line);border-radius:999px;padding:10px 20px;font-size:14px;font-weight:700;
+#toast{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);background:var(--sea-deep);color:#F4F1E9;
+  border-radius:999px;padding:10px 20px;font-size:13.5px;font-weight:700;box-shadow:0 6px 20px rgba(23,58,76,.25);
   opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:92vw;overflow:hidden}
 #toast.on{opacity:1}
-#pause{position:absolute;inset:0;background:rgba(255,248,236,.92);backdrop-filter:blur(3px);display:none;
+#pause{position:absolute;inset:0;background:rgba(244,241,233,.93);backdrop-filter:blur(4px);display:none;
   flex-direction:column;align-items:center;justify-content:center;gap:16px}
 #pause.on{display:flex}
 #pause h2{font-size:26px;font-weight:800}
+
+/* ───────── 미리보기(살펴보기) 모드 ───────── */
+#play.peekmode .hud .stat,#play.peekmode #btnSpeed,#play.peekmode #btnPause{display:none}
+#play.peekmode .hud .name::after{content:"살펴보기";margin-left:8px;font-size:10.5px;font-weight:800;
+  letter-spacing:.1em;color:#B4551F;background:var(--amber-soft);padding:3px 8px;border-radius:999px;
+  vertical-align:middle}
+.peekbar{display:none;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;
+  border-top:1px solid var(--line-2);background:var(--panel)}
+.legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--dim);font-weight:700}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend em{font-style:normal}
+.legend i{width:15px;height:15px;border-radius:5px;display:inline-block}
+.legend i.on{background:var(--land);border:1.5px solid var(--border-on)}
+.legend i.off{background:var(--land-2);border:1.5px solid var(--border-off)}
+.legend b{color:var(--paper);font-family:var(--mono)}
+.pkact{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.pkact .btn{padding:12px 18px;min-height:46px;font-size:14.5px;border-radius:12px}
+@media(max-width:560px){
+  .peekbar{gap:10px}
+  .legend{width:100%;font-size:12px}
+  .pkact{margin-left:0;width:100%}
+  .pkact .btn{flex:1}
+}
 
 /* ───────── 결과 ───────── */
 #result{overflow-y:auto;background:var(--ink)}
 .res{width:min(760px,100%);margin:0 auto;padding:clamp(24px,5vw,48px) 20px 60px}
 .res h2{font-size:clamp(26px,5vw,38px);font-weight:800;letter-spacing:-.03em}
-.res .verdict{color:var(--amber);font-size:13px;font-weight:800;letter-spacing:.16em;margin-bottom:8px}
+.res .verdict{color:var(--amber);font-size:12.5px;font-weight:800;letter-spacing:.16em;margin-bottom:8px}
 .scoreboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:26px 0}
-.sb{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
+.sb{background:var(--panel);border:1px solid var(--line-2);border-radius:15px;padding:14px;box-shadow:var(--shadow)}
 .sb span{font-size:11px;color:var(--dim);letter-spacing:.1em;font-weight:700}
 .sb b{display:block;font-family:var(--mono);font-size:28px;margin-top:6px;font-weight:700}
 .list{margin-top:8px;display:flex;flex-wrap:wrap;gap:7px}
-.tag{border:2px solid var(--line);border-radius:10px;padding:7px 12px;font-size:13px;background:var(--panel);font-weight:700}
-.tag.bad{border-color:rgba(255,107,107,.5);color:#C0453F;background:#FFEDEC}
-.tag.good{border-color:rgba(51,201,138,.45);color:#1C8A5F;background:#EAFBF3}
+.tag{border:1px solid var(--line-2);border-radius:10px;padding:7px 12px;font-size:13px;background:var(--panel);font-weight:700}
+.tag.bad{border-color:rgba(217,72,63,.35);color:#A8332B;background:#FCEDEC}
+.tag.good{border-color:rgba(18,166,123,.35);color:#0B7657;background:#E9F8F2}
 .tag small{font-family:var(--mono);color:var(--dim);margin-left:6px;font-weight:600}
-.iconbtn.bgmoff{color:var(--dim);border-color:var(--line)}
+.iconbtn.bgmoff{color:var(--dim)}
 .iconbtn.bgmon{color:#fff;background:var(--amber);border-color:var(--amber)}
 @media(max-width:640px){
   .hud{gap:7px;padding:8px 8px}
@@ -449,8 +493,15 @@ function decodeTopo(topo){
     const rings=[];
     for(const poly of polys) for(const rr of poly){
       const pts = ring(rr); if(pts.length<4) continue;
-      let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
-      for(const p of pts){ if(p[0]<x0)x0=p[0]; if(p[0]>x1)x1=p[0]; if(p[1]<y0)y0=p[1]; if(p[1]>y1)y1=p[1]; }
+      // 경도 180°/-180°를 넘나드는 나라(러시아·피지 등)의 경계상자가 지구 한 바퀴만큼
+      // 부풀려지지 않도록, 경도를 이어지는 값으로 펼친(unwrap) 뒤 범위를 잰다.
+      let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9, prevLon=null;
+      for(const p of pts){
+        let lon=p[0];
+        if(prevLon!==null){ while(lon-prevLon>180) lon-=360; while(lon-prevLon<-180) lon+=360; }
+        prevLon=lon;
+        if(lon<x0)x0=lon; if(lon>x1)x1=lon; if(p[1]<y0)y0=p[1]; if(p[1]>y1)y1=p[1];
+      }
       rings.push({pts, bb:[x0,y0,x1,y1]});
     }
     if(!rings.length) continue;
@@ -534,16 +585,25 @@ function drawMap(W,H,box,opts){
     const t=el("text",{x:6,y:eqY-4,class:"eqlabel"}); t.textContent="적도 0°"; svg.appendChild(t);
   }
   // 육지
-  const land=el("g",{}), marks=el("g",{}), labels=el("g",{});
-  const pad=(box[1]-box[0])*0.15, vb=[box[0]-pad,box[1]+pad,box[2]-pad,box[3]+pad];
-  const JUMP=Math.max(40,W*0.55); // 이 이상 한 번에 점프하면 지도 밖 좌표가 이어진 것 → 새 구간으로 끊는다
+  // 출제 범위 밖 나라를 먼저, 출제 범위(=클릭 가능) 나라를 그 위에 겹쳐 그린다.
+  // 그래야 클릭 가능한 나라의 진한 국경선이 이웃 나라에 덮여 흐려지지 않는다.
+  const landOff=el("g",{}), landOn=el("g",{}), marks=el("g",{}), labels=el("g",{});
+  // 러시아·피지처럼 경도 180°/-180° 선을 넘나드는 나라는, 원본 좌표가 그 경계에서
+  // +180↔-180으로 뚝 끊겨 있다. 예전에는 이 지점에서 그냥 선을 끊어버려 국경이
+  // 잘린 것처럼 보였는데, 대신 경도를 이어지는 값으로 펼쳐서(unwrap) 그대로
+  // 투영하면 국경선이 잘리지 않고 지도 바깥으로 자연스럽게 이어진다.
   const buildRing=(pts,merge)=>{
-    let seg="", px=1e9, py=1e9, n=0;
-    for(const p of pts){
-      const q=P(p[0],p[1]);
+    let seg="", px=1e9, py=1e9, n=0, prevLon=null;
+    for(const raw of pts){
+      let lon=raw[0];
+      if(prevLon!==null){
+        while(lon-prevLon>180) lon-=360;
+        while(lon-prevLon<-180) lon+=360;
+      }
+      prevLon=lon;
+      const q=P(lon,raw[1]);
       if(merge && n && Math.abs(q[0]-px)<0.55 && Math.abs(q[1]-py)<0.55) continue;
-      const jumped = n && Math.abs(q[0]-px)>JUMP;
-      seg += (n===0||jumped?"M":"L")+q[0].toFixed(1)+" "+q[1].toFixed(1);
+      seg += (n===0?"M":"L")+q[0].toFixed(1)+" "+q[1].toFixed(1);
       px=q[0]; py=q[1]; n++;
     }
     return {seg,n};
@@ -552,8 +612,12 @@ function drawMap(W,H,box,opts){
   for(const sh of SHAPES){
     let d="", area=0;
     for(const r of sh.rings){
+      // 예전엔 현재 지역 상자 근처가 아닌 나라의 폴리곤을 아예 건너뛰었는데(성능 최적화),
+      // 상자가 넓을 때(예: 아시아+오세아니아) 그 여백 계산이 부정확해서 모로코·서사하라처럼
+      // 화면에 실제로 보여야 할 이웃 나라까지 통째로 빠지는 문제가 있었다. 나라 수가
+      // 많지 않아 다 그려도 가벼우니, 화면 밖으로 나가는 부분은 SVG가 알아서 잘라내도록
+      // 맡기고 여기서는 더 이상 미리 걸러내지 않는다.
       const b=r.bb;
-      if(b[2]<vb[0]||b[0]>vb[1]||b[3]<vb[2]||b[1]>vb[3]) continue;
       let {seg,n}=buildRing(r.pts,true);
       if(n<3) ({seg,n}=buildRing(r.pts,false)); // 초소형 축척: 병합 없이 원래 좌표로 재시도
       if(n>=3){ d+=seg+"Z"; const w=(b[2]-b[0])*P.s, h=(myc(b[3])-myc(b[1]))*P.s; area+=w*h; }
@@ -563,7 +627,7 @@ function drawMap(W,H,box,opts){
     const isT = sh.key && opts.targets.has(sh.key);
     const p=el("path",{d,class:"cpath "+(isT?"target":"other"),"fill-rule":"evenodd"});
     p.dataset.k = sh.key||""; p.dataset.n = sh.ko||sh.name;
-    land.appendChild(p);
+    (isT?landOn:landOff).appendChild(p);
   }
   // 실제 폴리곤이 있는 나라는 반드시 그 모양 그대로 보여준다.
   // 점(원)은 폴리곤 데이터가 전혀 없는 나라에만 사용하고, 작은 폴리곤에는
@@ -612,15 +676,23 @@ function drawMap(W,H,box,opts){
     const cir=el("circle",{cx:p.x,cy:p.y,r:7,class:"dot"});
     cir.dataset.k=p.k; cir.dataset.n=p.c.ko; dots[p.k]=cir; marks.appendChild(cir);
   });
-  svg.appendChild(land); svg.appendChild(marks);
+  svg.appendChild(landOff); svg.appendChild(landOn); svg.appendChild(marks);
   // 미리보기 이름 — 서로 겹치지 않도록 밀어내고, 옮겨진 라벨은 실제 위치까지 안내선을 그린다
   if(opts.names){
+    // 한글은 라틴 문자보다 훨씬 넓다. 예전엔 글자 수 × 0.64로 계산해서 한글 이름의
+    // 실제 폭을 크게 과소평가했고, 그래서 "겹치지 않게 밀어내기"를 해도 여전히 글자가
+    // 포개져 보였다. 글자 종류별로 폭을 다르게 재서 정확히 밀어낸다.
+    const textW=(s,fs)=>{
+      let u=0;
+      for(const ch of s) u += /[ᄀ-ᇿ　-ヿ一-鿿가-힯＀-￯]/.test(ch) ? 1 : 0.54;
+      return u*fs;
+    };
     const FS=11, items=[];
     opts.targets.forEach(k=>{
       const c=BY_KEY[k];
       const q = dots[k] ? [+dots[k].getAttribute("cx"),+dots[k].getAttribute("cy")+16] : P(c.lon,c.lat);
       if(q[0]<-30||q[0]>W+30||q[1]<-30||q[1]>H+30) return;
-      const name=c.ko, w=name.length*FS*0.64+8, h=FS+7;
+      const name=c.ko, w=textW(name,FS)+13, h=FS+9;
       items.push({k,name,ax:q[0],ay:q[1],x:q[0],y:q[1],w,h});
     });
     for(let iter=0; iter<160; iter++){
@@ -637,11 +709,17 @@ function drawMap(W,H,box,opts){
       }
       if(!moved) break;
     }
+    // 안내선 → 알약 배경 → 글자 순서로 그려야 선이 알약 뒤로 깔끔하게 숨는다.
     items.forEach(it=>{
       if(Math.hypot(it.x-it.ax,it.y-it.ay)>7){
         labels.appendChild(el("line",{x1:it.ax,y1:it.ay,x2:it.x,y2:it.y,class:"leader"}));
+        labels.appendChild(el("circle",{cx:it.ax,cy:it.ay,r:1.7,fill:"rgba(30,46,60,.45)"}));
       }
-      const t=el("text",{x:it.x,y:it.y+FS*0.34,class:"plabel","text-anchor":"middle"});
+    });
+    items.forEach(it=>{
+      labels.appendChild(el("rect",{x:it.x-it.w/2,y:it.y-it.h/2,width:it.w,height:it.h,
+        rx:it.h/2,ry:it.h/2,class:"plabel-bg"}));
+      const t=el("text",{x:it.x,y:it.y+FS*0.35,class:"plabel","text-anchor":"middle"});
       t.textContent=it.name; labels.appendChild(t);
     });
     svg.appendChild(labels);
@@ -718,6 +796,7 @@ const targetKeys=()=>COUNTRIES.filter(c=>selSubs.has(c.sub)).map(c=>c.key);
 /* ═══════════ 5. 게임 ═══════════ */
 const stage=document.getElementById("stage"), labelsEl=document.getElementById("labels"), toastEl=document.getElementById("toast");
 const mapCtl=document.getElementById("mapCtl"), peekBar=document.getElementById("peekBar");
+const playEl=document.getElementById("play");
 const SPEED={slow:{dur:13,max:1,gap:.8},normal:{dur:9.5,max:2,gap:4.0},fast:{dur:7,max:3,gap:2.3}};
 let G=null, raf=0, soundOn=true, actx=null;
 
@@ -769,26 +848,29 @@ document.getElementById("zFit").onclick=()=>{ if(!G) return; G.view=initView(); 
 (()=>{
   const pointers=new Map();
   let pinch=null, drag=null;
+  // 확대/축소(휠·핀치)는 퀴즈 진행 중에도 쓸 수 있게 항상 켜둔다. 다만 한 손가락
+  // 드래그로 지도를 미는 동작은 실전 퀴즈 중에는 끈다 — 국가를 탭하는 순간 살짝
+  // 밀리면 오탭으로 이어질 수 있어서, 드래그 이동은 '지도 먼저 살펴보기'에서만 허용한다.
   stage.addEventListener("wheel",e=>{
-    if(!G||!G.peek) return;
+    if(!G||!G.view) return;
     e.preventDefault();
     const svg=stage.querySelector("svg"); if(!svg) return;
     zoomAt(svg,e.clientX,e.clientY,e.deltaY<0?1.14:1/1.14);
   },{passive:false});
   stage.addEventListener("pointerdown",e=>{
-    if(!G||!G.peek) return;
+    if(!G||!G.view) return;
     pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
     if(pointers.size===2){
       const pts=[...pointers.values()];
       pinch={dist:Math.hypot(pts[0].x-pts[1].x,pts[0].y-pts[1].y)||1,
              mid:{x:(pts[0].x+pts[1].x)/2,y:(pts[0].y+pts[1].y)/2}};
       drag=null;
-    }else if(pointers.size===1){
+    }else if(pointers.size===1 && G.peek){
       drag={sx:e.clientX,sy:e.clientY,lx:e.clientX,ly:e.clientY,moved:false,target:e.target};
     }
   });
   stage.addEventListener("pointermove",e=>{
-    if(!G||!G.peek||!pointers.has(e.pointerId)) return;
+    if(!G||!G.view||!pointers.has(e.pointerId)) return;
     pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
     const svg=stage.querySelector("svg"); if(!svg) return;
     if(pointers.size===2 && pinch){
@@ -798,7 +880,7 @@ document.getElementById("zFit").onclick=()=>{ if(!G) return; G.view=initView(); 
       zoomAt(svg,pinch.mid.x,pinch.mid.y,dist/pinch.dist);
       panByClient(svg,mid.x-pinch.mid.x,mid.y-pinch.mid.y);
       pinch={dist,mid};
-    }else if(pointers.size===1 && drag){
+    }else if(pointers.size===1 && drag && G.peek){
       const dx=e.clientX-drag.lx, dy=e.clientY-drag.ly;
       if(!drag.moved && Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)>6) drag.moved=true;
       if(drag.moved) panByClient(svg,dx,dy);
@@ -806,11 +888,11 @@ document.getElementById("zFit").onclick=()=>{ if(!G) return; G.view=initView(); 
     }
   });
   function end(e){
-    if(!G||!G.peek) return;
+    if(!G||!G.view) return;
     pointers.delete(e.pointerId);
     if(pointers.size<2) pinch=null;
     if(pointers.size===0 && drag){
-      if(!drag.moved){
+      if(!drag.moved && G.peek){
         const el=document.elementFromPoint(e.clientX,e.clientY);
         const nm=el&&el.dataset?el.dataset.n:"";
         if(nm) toast(nm,1200);
@@ -893,7 +975,8 @@ function startGame(keys,peek){
      queue:shuffle(keys.slice()), labels:[], solved:0, ok:[], bad:{}, missed:new Set(), tries:{},
      spawn:0, last:0, paused:false, done:false, total:keys.length};
   show("play");
-  labelsEl.innerHTML=""; mapCtl.style.display="none"; peekBar.style.display="none"; peekBar.innerHTML="";
+  labelsEl.innerHTML=""; mapCtl.style.display="flex"; peekBar.style.display="none"; peekBar.innerHTML="";
+  playEl.classList.toggle("peekmode",!!peek);
   document.getElementById("hudName").firstChild.nodeValue=REGION[selRegion].ko;
   document.getElementById("hudSub").textContent=[...selSubs].map(s=>SUB[s].ko).join(" · ");
   renderStage(); hud(); updateSpeedBtn();
@@ -918,13 +1001,26 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;
 
 /* — 미리보기 — */
 function enterPeek(){
-  G.namesOn=true; renderStage();
+  G.namesOn=true;
   document.getElementById("hudLives").textContent="";
-  toast("확대·이동해서 이름을 확인해보세요",2600);
+  playEl.classList.add("peekmode");
   mapCtl.style.display="flex";
   peekBar.style.display="flex";
-  peekBar.innerHTML=`<button class="btn primary" id="pStart">퀴즈 시작</button><button class="btn" id="pNames">이름 숨기기</button>`;
-  peekBar.querySelector("#pStart").onclick=()=>{ mapCtl.style.display="none"; peekBar.style.display="none"; G.peek=false; startGame(G.keys); };
+  // 아래 띠는 단순한 버튼 두 개가 아니라, 색이 무엇을 뜻하는지 알려주는 범례를 겸한다.
+  peekBar.innerHTML=`
+    <div class="legend">
+      <span><i class="on"></i><em>출제 범위 <b>${G.keys.length}</b>개국</em></span>
+      <span><i class="off"></i><em>범위 밖 · 참고용</em></span>
+    </div>
+    <div class="pkact">
+      <button class="btn" id="pNames">이름 숨기기</button>
+      <button class="btn primary" id="pStart">퀴즈 시작 →</button>
+    </div>`;
+  // 아래 띠를 먼저 펼친 뒤에 지도를 그려야 한다. 반대로 하면 지도가 띠 높이만큼
+  // 줄어들기 전 크기로 그려져서, 좌우에 빈 여백이 생기고 지도가 작아 보였다.
+  renderStage();
+  toast("확대·이동해서 이름을 확인해보세요",2600);
+  peekBar.querySelector("#pStart").onclick=()=>{ peekBar.style.display="none"; G.peek=false; startGame(G.keys); };
   peekBar.querySelector("#pNames").onclick=e=>{ G.namesOn=!G.namesOn; renderStage();
     e.target.textContent=G.namesOn?"이름 숨기기":"이름 보기"; };
 }
@@ -976,10 +1072,20 @@ function flash(key,cls,ms){
     n.classList.add(cls); setTimeout(()=>n.classList.remove(cls),ms||700);
   });
 }
+// 지도 확대·이동 중에는 SVG 안쪽 좌표(=지도 고유 좌표)와 화면에 실제로 보이는
+// 픽셀 위치가 달라진다. 정답 애니메이션(날아가는 이름표, +점수 표시)이 확대된
+// 지도 위에서도 정확한 위치에 떨어지도록, 현재 뷰박스를 기준으로 화면 픽셀로 바꿔준다.
+function toScreen(ux,uy){
+  const svg=stage.querySelector("svg");
+  if(!svg||!G) return [ux,uy];
+  const vb=svg.viewBox.baseVal;
+  if(!vb||!vb.width||!vb.height) return [ux,uy];
+  return [(ux-vb.x)/vb.width*G.W, (uy-vb.y)/vb.height*G.H];
+}
 function centerOf(key){
   const dot=stage.querySelector(`.dot[data-k="${key}"]`);
-  if(dot) return [+dot.getAttribute("cx"),+dot.getAttribute("cy")];
-  const c=BY_KEY[key]; return G.P(c.lon,c.lat);
+  const u = dot ? [+dot.getAttribute("cx"),+dot.getAttribute("cy")] : (()=>{ const c=BY_KEY[key]; return G.P(c.lon,c.lat); })();
+  return toScreen(u[0],u[1]);
 }
 
 function onMapClick(e){
@@ -1055,7 +1161,8 @@ function finish(cleared){
   const ob=document.getElementById("onlyBad"); if(ob) ob.onclick=()=>startGame(shuffle(wrongKeys.slice()));
   document.getElementById("home2").onclick=goHome;
 }
-function goHome(){ if(G){G.done=true;} cancelAnimationFrame(raf); labelsEl.innerHTML=""; stage.classList.remove("live"); show("home"); }
+function goHome(){ if(G){G.done=true;} cancelAnimationFrame(raf); labelsEl.innerHTML="";
+  stage.classList.remove("live"); playEl.classList.remove("peekmode"); peekBar.style.display="none"; show("home"); }
 
 /* — 버튼 — */
 document.getElementById("btnPause").onclick=()=>{ G.paused=true; document.getElementById("pause").classList.add("on"); };
