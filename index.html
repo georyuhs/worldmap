@@ -1,236 +1,262 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>나라야, 가라앉지마! 🌏 세계지도 서바이벌</title>
+<title>나라야, 가라앉지마 · 세계지도 서바이벌</title>
 <style>
 :root{
   /* ── 종이·잉크 ─────────────────────────────── */
-  --ink:#F4F1E9;          /* 화면 배경 · 따뜻한 종이 */
+  --ink:#FAF9F6;          /* 화면 바탕 (변수명은 기존 코드 호환용) */
   --panel:#FFFFFF;
-  --paper:#1E2E3C;        /* 본문 글자 · 깊은 남색 */
-  --dim:#77899B;
-  --line:rgba(30,46,60,.10);
-  --line-2:rgba(30,46,60,.18);
+  --paper:#16212C;        /* 본문 글자 */
+  --paper-2:#41505F;
+  --dim:#8B95A2;
+  --line:rgba(22,33,44,.09);
+  --line-2:rgba(22,33,44,.15);
 
-  /* ── 바다 ──────────────────────────────────── */
-  --sea:#CFE3EC;          /* 바다 · 은은한 빙하빛 */
-  --sea-2:#B6D5E3;        /* 경위선 */
-  --sea-deep:#173A4C;     /* 낙하 이름표·토스트 바탕 */
+  /* ── 바다 : 종이보다 한 단계 짙게 깔아 지도를 한 덩어리로 보이게 한다 ── */
+  --sea:#CBDAE1;          /* 채도를 뺀 강청색 */
+  --sea-2:#B8CCD6;        /* 경위선 */
+  --sea-deep:#14303E;     /* 이름표·안내문 바탕 */
 
-  /* ── 육지 : 클릭 가능 여부를 색으로 확실히 구분 ── */
-  --land:#F3BE5F;         /* ★ 출제 범위(클릭 가능) · 선명한 허니 */
-  --land-hi:#FFD584;      /* 출제 범위 hover */
-  --land-2:#E5DED1;       /* 출제 범위 밖(클릭 불가) · 채도 뺀 모래빛 */
-  --border-on:#3D5162;    /* 출제 범위 국경 — 진하게 */
-  --border-off:#BCB1A0;   /* 범위 밖 국경 — 흐리게 */
+  /* ── 육지 : 밝은 종이빛 위에 출제 범위만 흙빛으로 얹는다 ── */
+  --land:#D8A97C;         /* 출제 범위(클릭 가능) · 차분한 흙빛 */
+  --land-hi:#EABF97;
+  --land-2:#F2EFE8;       /* 출제 범위 밖 · 종이빛 */
+  --border-on:#33444F;
+  --border-off:#C9C2B6;
   --border:var(--border-on);
 
   /* ── 강조색 ─────────────────────────────────── */
-  --amber:#DE6E3C;        /* 주 액션 · 테라코타 */
-  --amber-soft:#FCEADD;
-  --mint:#12A67B;         /* 정답 */
-  --coral:#D9483F;        /* 오답 */
-  --reveal:#3C5A70;       /* 놓친 나라 공개 */
+  --accent:#14564F;       /* 주 액션 · 깊은 청록 */
+  --accent-hi:#1A6C63;
+  --accent-soft:#E5EFEC;
+  --gold:#A9761F;         /* 숫자 강조 */
+  --ok:#157A5E;           /* 정답 */
+  --no:#B44A3F;           /* 오답 */
+  --reveal:#33424E;       /* 놓친 나라 공개 · 짙은 먹빛 */
+  /* 이전 이름 호환 */
+  --mint:var(--ok); --coral:var(--no); --amber:var(--accent);
 
   --font:'Pretendard','Pretendard Variable',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
   --mono:ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace;
-  --shadow:0 2px 10px rgba(30,46,60,.07);
-  --shadow-lg:0 12px 30px rgba(30,46,60,.13);
+  --shadow:0 1px 2px rgba(22,33,44,.04),0 4px 14px rgba(22,33,44,.05);
+  --shadow-lg:0 2px 4px rgba(22,33,44,.04),0 16px 36px rgba(22,33,44,.10);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
   background:var(--ink);color:var(--paper);font-family:var(--font);
-  -webkit-font-smoothing:antialiased;overflow:hidden;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow:hidden;
 }
 button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer;
   -webkit-tap-highlight-color:transparent}
-button:focus-visible,.card:focus-visible,.chipbtn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+button:focus-visible,.card:focus-visible,.chipbtn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .screen{position:fixed;inset:0;display:none;flex-direction:column}
 .screen.on{display:flex}
 
 /* ───────── 홈 ───────── */
 #home{overflow-y:auto;overflow-x:hidden;background:
-  radial-gradient(58% 38% at 8% -4%,rgba(243,190,95,.22),transparent 62%),
-  radial-gradient(52% 34% at 102% 4%,rgba(180,214,229,.45),transparent 62%),
+  radial-gradient(70% 42% at 50% -8%,rgba(213,226,233,.55),transparent 70%),
   var(--ink)}
-.wrap{width:min(880px,100%);margin:0 auto;padding:clamp(22px,5vw,40px) clamp(16px,5vw,28px) 72px}
-.eyebrow{font-size:11.5px;letter-spacing:.16em;color:#B4551F;font-weight:800;margin-bottom:10px;
-  background:var(--amber-soft);display:inline-block;padding:5px 11px;border-radius:999px}
-h1{font-size:clamp(26px,7vw,42px);font-weight:800;letter-spacing:-.025em;line-height:1.18}
-h1 em{font-style:normal;color:var(--amber)}
-.sub{color:var(--dim);margin-top:12px;font-size:14.5px;line-height:1.6;max-width:60ch}
-.rule{height:1px;background:var(--line-2);margin:26px 0 20px}
+.wrap{width:min(900px,100%);margin:0 auto;padding:clamp(26px,6vw,56px) clamp(18px,5vw,32px) 80px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:clamp(28px,6vw,48px)}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;letter-spacing:.1em;
+  color:var(--dim);font-weight:700}
+.eyebrow::before{content:"";width:22px;height:1px;background:var(--line-2)}
+h1{font-size:clamp(30px,7.4vw,50px);font-weight:800;letter-spacing:-.035em;line-height:1.12}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{color:var(--paper-2);margin-top:16px;font-size:15px;line-height:1.72;max-width:46ch}
+.rule{height:1px;background:var(--line);margin:clamp(30px,6vw,44px) 0 22px}
+.lbl{font-size:10.5px;letter-spacing:.1em;color:var(--dim);font-weight:700;margin:20px 0 11px;text-transform:uppercase}
 .grid{display:grid;grid-template-columns:1fr;gap:14px}
-@media(min-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:660px){.grid{grid-template-columns:repeat(2,1fr)}}
 .card{
   position:relative;text-align:left;background:var(--panel);border:1px solid var(--line-2);
-  border-radius:18px;padding:16px 16px 14px;transition:transform .18s ease,border-color .18s,box-shadow .18s;
-  display:flex;flex-direction:column;gap:9px;min-height:236px;box-shadow:var(--shadow);
+  border-radius:16px;padding:16px;transition:transform .2s cubic-bezier(.2,.8,.3,1),border-color .2s,box-shadow .2s;
+  display:flex;flex-direction:column;gap:10px;min-height:248px;box-shadow:var(--shadow);
 }
-.card:hover{transform:translateY(-3px);border-color:var(--amber);box-shadow:var(--shadow-lg)}
-.card.sel{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-soft),var(--shadow-lg)}
-.card .no{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.12em;font-weight:700}
-.card h3{font-size:21px;font-weight:800;letter-spacing:-.015em}
-.card .thumb{flex:1;min-height:118px;display:flex;align-items:center;justify-content:center;
-  background:var(--sea);border-radius:12px;overflow:hidden;border:1px solid rgba(30,46,60,.06)}
-.card .thumb svg{width:100%;height:128px;display:block}
-.card .meta{font-size:12.5px;color:var(--dim);line-height:1.5}
+.card:hover{transform:translateY(-4px);border-color:rgba(20,86,79,.35);box-shadow:var(--shadow-lg)}
+.card.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),var(--shadow-lg)}
+.card .no{font-family:var(--mono);font-size:10.5px;color:var(--dim);letter-spacing:.16em;font-weight:600}
+.card h3{font-size:20px;font-weight:800;letter-spacing:-.025em}
+.card .thumb{flex:none;height:130px;display:flex;align-items:center;justify-content:center;
+  background:var(--sea);border-radius:10px;overflow:hidden}
+.card .thumb svg{width:100%;height:130px;display:block}
+.card .meta{font-size:12px;color:var(--dim);line-height:1.6}
 .card .n{color:var(--paper);font-family:var(--mono);font-weight:700}
 
 /* 설정 패널 */
-#setup{display:none;margin-top:18px;background:var(--panel);border:1px solid var(--line-2);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
-#setup.on{display:block;animation:rise .25s ease}
-@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.set-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:6px}
-.set-head h2{font-size:22px;font-weight:800;letter-spacing:-.02em}
+#setup{display:none;margin-top:16px;background:var(--panel);border:1px solid var(--line-2);border-radius:16px;padding:clamp(18px,4vw,26px);box-shadow:var(--shadow)}
+#setup.on{display:block;animation:rise .28s cubic-bezier(.2,.8,.3,1)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.set-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px}
+.set-head h2{font-size:23px;font-weight:800;letter-spacing:-.03em}
 .set-head span{color:var(--dim);font-size:13px}
-.lbl{font-size:11px;letter-spacing:.14em;color:var(--dim);font-weight:800;margin:18px 0 9px}
-.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
 .chipbtn{
-  border:1px solid var(--line-2);background:var(--panel);color:var(--dim);border-radius:999px;
-  padding:11px 16px;font-size:14px;font-weight:700;transition:.15s;min-height:44px;
+  border:1px solid var(--line-2);background:var(--panel);color:var(--paper-2);border-radius:10px;
+  padding:10px 15px;font-size:13.5px;font-weight:600;transition:.16s;min-height:42px;letter-spacing:-.01em;
 }
-.chipbtn:hover{border-color:var(--amber);color:var(--paper)}
-.chipbtn.on{background:var(--amber);border-color:var(--amber);color:#fff;box-shadow:0 2px 8px rgba(222,110,60,.28)}
-.chipbtn small{font-family:var(--mono);opacity:.7;margin-left:5px}
-.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
-.btn{border-radius:13px;padding:14px 22px;font-weight:800;font-size:15.5px;border:1px solid var(--line-2);
-  background:var(--panel);transition:.15s;min-height:50px}
-.btn:hover{border-color:var(--amber);transform:translateY(-1px)}
-.btn.primary{background:var(--amber);color:#fff;border-color:var(--amber);box-shadow:0 3px 12px rgba(222,110,60,.3)}
-.btn.primary:hover{filter:brightness(1.06)}
-.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.count{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--dim);font-weight:700}
-.count b{color:var(--amber);font-size:19px}
+.chipbtn:hover{border-color:var(--accent);color:var(--paper)}
+.chipbtn.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700}
+.chipbtn small{font-family:var(--mono);opacity:.6;margin-left:6px;font-size:11px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px;align-items:center}
+.btn{border-radius:11px;padding:13px 20px;font-weight:700;font-size:15px;border:1px solid var(--line-2);
+  background:var(--panel);transition:.16s;min-height:48px;letter-spacing:-.015em}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{background:var(--accent-hi);border-color:var(--accent-hi);color:#fff}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.count{margin-left:auto;font-size:12.5px;color:var(--dim);font-weight:600}
+.count b{color:var(--paper);font-family:var(--mono);font-size:17px}
 
 /* 로딩 / 오류 */
-#boot{padding:13px 15px;border:1px solid var(--line-2);border-radius:13px;background:var(--panel);font-size:13.5px;color:var(--dim);display:flex;gap:10px;align-items:center;margin-bottom:18px}
-#boot .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:pulse 1s infinite}
-@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
-#boot.err{border-color:rgba(217,72,63,.45)}
-#boot.err .dot{background:var(--coral);animation:none}
+#boot{padding:12px 15px;border:1px solid var(--line-2);border-radius:11px;background:var(--panel);font-size:13px;color:var(--dim);display:flex;gap:10px;align-items:center;margin-bottom:20px}
+#boot .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.1s infinite;flex:none}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+#boot.err{border-color:rgba(188,68,59,.35)}
+#boot.err .dot{background:var(--no);animation:none}
 #boot.ok{display:none}
 #boot input{display:none}
 
 /* ───────── 게임 ───────── */
 #play{background:var(--ink)}
-.hud{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--line-2);background:var(--panel);flex-wrap:wrap}
-.hud .name{font-weight:800;font-size:14px;letter-spacing:-.015em}
-.hud .name small{display:block;font-weight:600;color:var(--dim);font-size:10.5px;letter-spacing:0}
-.stat{font-family:var(--mono);font-size:11px;color:var(--dim);display:flex;align-items:baseline;gap:4px}
-.stat b{font-size:17px;color:var(--paper);font-weight:800}
-.stat.combo b{color:var(--amber)}
-.lives{letter-spacing:2px;font-size:14px;color:var(--coral)}
+.hud{display:flex;align-items:center;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line-2);
+  background:var(--panel);flex-wrap:wrap}
+.hud .name{font-weight:800;font-size:13.5px;letter-spacing:-.025em;line-height:1.25}
+.hud .name small{display:block;font-weight:500;color:var(--dim);font-size:10.5px;letter-spacing:0;margin-top:1px}
+.stats{display:flex;align-items:center;gap:2px;background:rgba(22,33,44,.035);border-radius:9px;padding:4px 6px}
+.stat{font-size:10px;color:var(--dim);display:flex;align-items:baseline;gap:4px;font-weight:600;
+  padding:2px 8px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:none}
+.stat b{font-family:var(--mono);font-size:15px;color:var(--paper);font-weight:700}
+.stat.combo b{color:var(--gold)}
+.lives{letter-spacing:1px;font-size:11px;color:var(--no)}
 .hud .sp{flex:1}
-.iconbtn{border:1px solid var(--line-2);border-radius:11px;padding:10px 13px;font-size:14px;font-weight:700;color:var(--paper);
-  min-height:44px;background:var(--panel);transition:.15s}
-.iconbtn:hover{border-color:var(--amber)}
+.tools{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.iconbtn{border:1px solid var(--line-2);border-radius:9px;padding:8px 12px;font-size:12.5px;font-weight:600;
+  color:var(--paper-2);min-height:38px;background:var(--panel);transition:.16s;letter-spacing:-.01em}
+.iconbtn:hover{border-color:var(--accent);color:var(--accent)}
+.iconbtn.off{color:var(--dim)}
+.iconbtn.on{color:#fff;background:var(--accent);border-color:var(--accent)}
 
-#stage{position:relative;flex:1;overflow:hidden;touch-action:none}
+#stage{position:relative;flex:1;overflow:hidden;touch-action:none;background:var(--sea)}
 #stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
-.mapctl{position:absolute;left:12px;top:12px;z-index:5;display:none;flex-direction:column;gap:6px;
-  background:rgba(255,255,255,.96);backdrop-filter:blur(6px);padding:5px;border-radius:14px;
+.mapctl{position:absolute;left:14px;top:14px;z-index:5;display:none;flex-direction:column;
+  background:#FFFFFF;border-radius:11px;overflow:hidden;
   border:1px solid var(--line-2);box-shadow:var(--shadow)}
-.mapctl button{width:40px;height:40px;border-radius:10px;background:transparent;border:none;
-  font-size:19px;font-weight:800;color:var(--paper);line-height:1;
+.mapctl button{width:38px;height:38px;background:transparent;border:none;border-bottom:1px solid var(--line);
+  font-size:17px;font-weight:600;color:var(--paper-2);line-height:1;
   display:flex;align-items:center;justify-content:center;transition:.12s}
-.mapctl button:hover{background:var(--amber-soft);color:#B4551F}
-.mapctl button:active{transform:scale(.9)}
+.mapctl button:last-child{border-bottom:none}
+.mapctl button:hover{background:var(--accent-soft);color:var(--accent)}
+.mapctl button:active{background:var(--accent);color:#fff}
 
-/* 지도 · 나라 색 (클릭 가능/불가 구분) */
-.cpath{stroke-linejoin:round;vector-effect:non-scaling-stroke;transition:fill .12s}
-.cpath.other{fill:var(--land-2);stroke:var(--border-off);stroke-width:.75}
-.cpath.target{fill:var(--land);stroke:var(--border-on);stroke-width:1.15}
+/* 지도 · 나라 색 (클릭 가능 / 불가) */
+.cpath{stroke-linejoin:round;vector-effect:non-scaling-stroke;transition:fill .14s}
+.cpath.other{fill:var(--land-2);stroke:var(--border-off);stroke-width:.7}
+.cpath.target{fill:var(--land);stroke:var(--border-on);stroke-width:1.1}
 #stage.live .cpath.target{cursor:pointer}
 #stage.live .cpath.target:hover{fill:var(--land-hi)}
-.cpath.hit-ok{fill:var(--mint)!important;stroke:#0B7657!important}
-.cpath.hit-no{fill:var(--coral)!important;stroke:#9E2F28!important}
-.cpath.reveal{fill:var(--reveal)!important;stroke:#22394A!important}
-.dot{stroke:var(--border-on);stroke-width:1.4;fill:var(--land)}
+.cpath.hit-ok{fill:var(--ok)!important;stroke:#0D5744!important}
+.cpath.hit-no{fill:var(--no)!important;stroke:#87332B!important}
+.cpath.reveal{fill:var(--reveal)!important;stroke:#1D2A33!important}
+.dot{stroke:var(--border-on);stroke-width:1.3;fill:var(--land)}
 .dot.other{fill:var(--land-2);stroke:var(--border-off)}
 .dothit{fill:transparent;stroke:none;cursor:pointer}
 #stage.live .dot:hover{fill:var(--land-hi)}
-.dot.hit-ok{fill:var(--mint)!important}.dot.hit-no{fill:var(--coral)!important}.dot.reveal{fill:var(--reveal)!important}
-.grat{stroke:var(--sea-2);stroke-width:.7;fill:none;opacity:.75}
-.eqline{stroke:#C8622A;stroke-width:1.3;stroke-dasharray:7 5;fill:none;opacity:.7}
-.eqlabel{font-size:9px;font-weight:800;fill:#C8622A;letter-spacing:.06em;pointer-events:none;opacity:.85}
-.leader{stroke:rgba(30,46,60,.32);stroke-width:.7;fill:none}
-.plabel-bg{fill:rgba(255,255,255,.94);stroke:rgba(30,46,60,.16);stroke-width:.7;
-  vector-effect:non-scaling-stroke;pointer-events:none}
-.plabel{font-size:11px;font-weight:700;fill:#25384A;letter-spacing:-.01em;pointer-events:none}
+.dot.hit-ok{fill:var(--ok)!important}.dot.hit-no{fill:var(--no)!important}.dot.reveal{fill:var(--reveal)!important}
+.grat{stroke:var(--sea-2);stroke-width:.7;fill:none;opacity:.9}
+.eqline{stroke:#8A5C2E;stroke-width:1;stroke-dasharray:6 6;fill:none;opacity:.45}
+.eqlabel{font-size:8.5px;font-weight:700;fill:#7E5228;letter-spacing:.1em;pointer-events:none;opacity:.75}
+.leader{stroke:rgba(22,33,44,.35);stroke-width:.7;fill:none}
+/* 배경 상자를 깔면 지도가 가려져서, 글자에 흰 테두리(버퍼)만 둘러 읽히게 한다.
+   paint-order:stroke 덕분에 테두리가 먼저 깔리고 글자가 그 위에 얹힌다. */
+.plabel{font-size:10.5px;font-weight:700;fill:#1C2833;letter-spacing:-.02em;pointer-events:none;
+  paint-order:stroke;stroke:#FFFFFF;stroke-width:3.4px;stroke-linejoin:round;stroke-opacity:.92}
 
-/* 낙하 라벨 */
+/* 낙하 이름표 */
 #labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .chip{
   position:absolute;transform:translate(-50%,0);will-change:transform;
-  background:var(--sea-deep);border:1px solid rgba(255,255,255,.14);border-left:3px solid var(--amber);
-  border-radius:11px;padding:7px 14px 8px;text-align:center;box-shadow:0 8px 22px rgba(23,58,76,.28);
+  background:var(--sea-deep);border-radius:9px;padding:8px 15px 9px;text-align:center;
+  box-shadow:0 10px 26px rgba(20,48,62,.22),0 1px 0 rgba(255,255,255,.08) inset;
 }
-.chip b{display:block;font-size:clamp(15px,2.6vw,19px);font-weight:800;letter-spacing:-.015em;white-space:nowrap;color:#F4F1E9}
-.chip i{display:block;font-style:normal;font-size:10.5px;color:#F0A272;margin-top:2px;letter-spacing:.05em}
+.chip b{display:block;font-size:clamp(14px,2.5vw,18px);font-weight:700;letter-spacing:-.03em;white-space:nowrap;color:#F7F5F0}
+.chip i{display:block;font-style:normal;font-size:9.5px;color:rgba(239,203,136,.85);margin-top:3px;letter-spacing:.1em;font-weight:600}
 .chip::before{content:"";position:absolute;left:50%;bottom:100%;width:1px;height:min(46vh,340px);
-  background:linear-gradient(to top,rgba(222,110,60,.45),transparent);pointer-events:none}
-.chip::after{content:"";position:absolute;left:50%;top:100%;margin-left:-4px;border:4px solid transparent;border-top-color:rgba(222,110,60,.7)}
+  background:linear-gradient(to top,rgba(20,48,62,.28),transparent);pointer-events:none}
+.chip::after{content:"";position:absolute;left:50%;top:100%;margin-left:-3px;border:3px solid transparent;border-top-color:var(--sea-deep)}
 .chip.gone{transition:opacity .3s ease;opacity:0}
-.sealine{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(222,110,60,.55),transparent)}
-.float{position:absolute;transform:translate(-50%,-50%);font-family:var(--mono);font-weight:800;font-size:17px;
+.sealine{position:absolute;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(20,48,62,.28),transparent)}
+.float{position:absolute;transform:translate(-50%,-50%);font-family:var(--mono);font-weight:700;font-size:16px;
   pointer-events:none;animation:up 1s ease-out forwards;
-  text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 6px #fff,0 1px 2px rgba(255,255,255,.9)}
-@keyframes up{0%{opacity:1}100%{opacity:0;transform:translate(-50%,-160%)}}
-#toast{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);background:var(--sea-deep);color:#F4F1E9;
-  border-radius:999px;padding:10px 20px;font-size:13.5px;font-weight:700;box-shadow:0 6px 20px rgba(23,58,76,.25);
-  opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;max-width:92vw;overflow:hidden}
-#toast.on{opacity:1}
-#pause{position:absolute;inset:0;background:rgba(244,241,233,.93);backdrop-filter:blur(4px);display:none;
-  flex-direction:column;align-items:center;justify-content:center;gap:16px}
+  text-shadow:0 0 3px #fff,0 0 3px #fff,0 0 7px #fff}
+@keyframes up{0%{opacity:1}100%{opacity:0;transform:translate(-50%,-170%)}}
+#toast{position:absolute;left:50%;bottom:22px;transform:translateX(-50%) translateY(6px);background:var(--sea-deep);color:#F7F5F0;
+  border-radius:9px;padding:10px 18px;font-size:13px;font-weight:600;letter-spacing:-.01em;
+  box-shadow:0 8px 24px rgba(20,48,62,.22);
+  opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;white-space:nowrap;max-width:92vw;overflow:hidden}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+#pause{position:absolute;inset:0;z-index:10;background:rgba(250,249,246,.92);backdrop-filter:blur(7px);display:none;
+  flex-direction:column;align-items:center;justify-content:center;gap:20px}
 #pause.on{display:flex}
-#pause h2{font-size:26px;font-weight:800}
+#pause h2{font-size:24px;font-weight:800;letter-spacing:-.03em}
 
-/* ───────── 미리보기(살펴보기) 모드 ───────── */
-#play.peekmode .hud .stat,#play.peekmode #btnSpeed,#play.peekmode #btnPause{display:none}
-#play.peekmode .hud .name::after{content:"살펴보기";margin-left:8px;font-size:10.5px;font-weight:800;
-  letter-spacing:.1em;color:#B4551F;background:var(--amber-soft);padding:3px 8px;border-radius:999px;
+/* ───────── 살펴보기 모드 ───────── */
+#play.peekmode .stats,#play.peekmode #btnSpeed,#play.peekmode #btnPause{display:none}
+#play.peekmode .hud .name::after{content:"살펴보기";margin-left:8px;font-size:9.5px;font-weight:700;
+  letter-spacing:.14em;color:var(--accent);background:var(--accent-soft);padding:3px 8px;border-radius:5px;
   vertical-align:middle}
-.peekbar{display:none;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;
+.peekbar{display:none;align-items:center;gap:14px;flex-wrap:wrap;padding:11px 14px;
   border-top:1px solid var(--line-2);background:var(--panel)}
-.legend{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--dim);font-weight:700}
-.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend{display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--dim);font-weight:600}
+.legend span{display:inline-flex;align-items:center;gap:7px}
 .legend em{font-style:normal}
-.legend i{width:15px;height:15px;border-radius:5px;display:inline-block}
-.legend i.on{background:var(--land);border:1.5px solid var(--border-on)}
-.legend i.off{background:var(--land-2);border:1.5px solid var(--border-off)}
+.legend i{width:13px;height:13px;border-radius:4px;display:inline-block;flex:none}
+.legend i.on{background:var(--land);border:1px solid var(--border-on)}
+.legend i.off{background:var(--land-2);border:1px solid var(--border-off)}
 .legend b{color:var(--paper);font-family:var(--mono)}
 .pkact{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
-.pkact .btn{padding:12px 18px;min-height:46px;font-size:14.5px;border-radius:12px}
-@media(max-width:560px){
-  .peekbar{gap:10px}
-  .legend{width:100%;font-size:12px}
+.pkact .btn{padding:11px 18px;min-height:44px;font-size:14px}
+@media(max-width:600px){
+  .legend{width:100%;font-size:11.5px;gap:14px}
   .pkact{margin-left:0;width:100%}
   .pkact .btn{flex:1}
 }
 
 /* ───────── 결과 ───────── */
 #result{overflow-y:auto;background:var(--ink)}
-.res{width:min(760px,100%);margin:0 auto;padding:clamp(24px,5vw,48px) 20px 60px}
-.res h2{font-size:clamp(26px,5vw,38px);font-weight:800;letter-spacing:-.03em}
-.res .verdict{color:var(--amber);font-size:12.5px;font-weight:800;letter-spacing:.16em;margin-bottom:8px}
-.scoreboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin:26px 0}
-.sb{background:var(--panel);border:1px solid var(--line-2);border-radius:15px;padding:14px;box-shadow:var(--shadow)}
-.sb span{font-size:11px;color:var(--dim);letter-spacing:.1em;font-weight:700}
-.sb b{display:block;font-family:var(--mono);font-size:28px;margin-top:6px;font-weight:700}
-.list{margin-top:8px;display:flex;flex-wrap:wrap;gap:7px}
-.tag{border:1px solid var(--line-2);border-radius:10px;padding:7px 12px;font-size:13px;background:var(--panel);font-weight:700}
-.tag.bad{border-color:rgba(217,72,63,.35);color:#A8332B;background:#FCEDEC}
-.tag.good{border-color:rgba(18,166,123,.35);color:#0B7657;background:#E9F8F2}
-.tag small{font-family:var(--mono);color:var(--dim);margin-left:6px;font-weight:600}
-.iconbtn.bgmoff{color:var(--dim)}
-.iconbtn.bgmon{color:#fff;background:var(--amber);border-color:var(--amber)}
+.res{width:min(780px,100%);margin:0 auto;padding:clamp(30px,6vw,60px) 20px 70px}
+.res h2{font-size:clamp(25px,5vw,36px);font-weight:800;letter-spacing:-.035em;line-height:1.2}
+.ressub{color:var(--dim);font-size:13.5px;margin-top:8px;letter-spacing:-.01em}
+.res .verdict{display:inline-flex;align-items:center;gap:8px;color:var(--dim);font-size:10.5px;font-weight:700;
+  letter-spacing:.12em;margin-bottom:12px}
+.res .verdict::before{content:"";width:20px;height:1px;background:var(--line-2)}
+.scoreboard{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin:30px 0 6px}
+.sb{background:var(--panel);border:1px solid var(--line-2);border-radius:12px;padding:15px 16px}
+.sb span{font-size:10.5px;color:var(--dim);letter-spacing:.06em;font-weight:600}
+.sb b{display:block;font-family:var(--mono);font-size:27px;margin-top:7px;font-weight:700;letter-spacing:-.02em}
+.list{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.tag{border:1px solid var(--line-2);border-radius:8px;padding:7px 11px;font-size:12.5px;background:var(--panel);font-weight:600}
+.tag.bad{border-color:rgba(188,68,59,.28);color:#9A342C;background:#FBF0EF}
+.tag.good{border-color:rgba(23,122,96,.25);color:var(--ok);background:#EFF6F3}
+.tag small{font-family:var(--mono);color:var(--dim);margin-left:6px;font-weight:500;font-size:10.5px}
+.pauseset{display:none;gap:8px}
 @media(max-width:640px){
-  .hud{gap:7px;padding:8px 8px}
-  .stat b{font-size:15px}
-  .hud .name{font-size:12.5px}
-  .iconbtn{padding:9px 10px;font-size:12.5px}
-  h1{line-height:1.15}
+  /* 이름은 첫 줄을 온전히 쓰고, 아래 한 줄에 통계와 버튼을 모은다.
+     예전엔 버튼이 줄바꿈되며 머리말이 화면의 5분의 1을 차지했다. */
+  .hud{gap:8px;padding:8px 10px}
+  .hud .name{flex-basis:100%;font-size:12.5px}
+  .hud .sp{display:none}
+  .tools{margin-left:auto;gap:5px}
+  #btnSound,#btnBGM{display:none}       /* 일시정지 화면에서 조절 */
+  .pauseset{display:flex}
+  #play.peekmode .hud .name{flex-basis:auto}   /* 살펴보기에선 통계가 없으니 한 줄로 */
+  .stats{padding:3px 4px}
+  .stat{padding:2px 6px}
+  .stat b{font-size:13.5px}
+  .iconbtn{padding:7px 10px;font-size:11.5px;min-height:34px}
 }
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
@@ -238,19 +264,19 @@ h1 em{font-style:normal;color:var(--amber)}
 <!-- ══════════ 홈 ══════════ -->
 <div class="screen on" id="home">
  <div class="wrap">
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
-    <div class="eyebrow">2026 세계지리 · 지도 서바이벌</div>
-    <button class="iconbtn bgmoff" id="btnBGMHome">🎵 BGM</button>
+  <div class="topbar">
+    <div class="eyebrow">2026 세계지리 · 권역별 백지도</div>
+    <button class="iconbtn off" id="btnBGMHome">배경음</button>
   </div>
-  <h1>나라야, 가라앉지마!<br><em>세계지도 서바이벌</em> 🌏</h1>
-  <p class="sub">지명이 바다로 가라앉기 전에, 지도에서 나라를 콕 찍어 구해주세요.
-  틀리면 풍덩, 맞히면 세이브!</p>
+  <h1>나라야, 가라앉지마<br><em>세계지도 서바이벌</em></h1>
+  <p class="sub">나라 이름이 수면에 닿기 전에, 지도에서 그 나라를 찾아 누르세요.
+  권역과 소단원을 골라 원하는 범위만 연습할 수 있습니다.</p>
 
   <div id="boot"><span class="dot"></span><span id="bootmsg">세계 국경 데이터를 불러오는 중…</span>
     <input type="file" id="fileIn" accept=".json"></div>
 
   <div class="rule"></div>
-  <div class="lbl">지역 선택</div>
+  <div class="lbl">권역 선택</div>
   <div class="grid" id="cards"></div>
 
   <div id="setup"></div>
@@ -261,16 +287,20 @@ h1 em{font-style:normal;color:var(--amber)}
 <div class="screen" id="play">
   <div class="hud">
     <div class="name" id="hudName">—<small id="hudSub">—</small></div>
-    <div class="stat">점수<b id="hudScore">0</b></div>
-    <div class="stat combo">연속<b id="hudCombo">0</b></div>
-    <div class="stat">남은 문제<b id="hudLeft">0</b></div>
-    <div class="stat lives" id="hudLives">♥♥♥</div>
+    <div class="stats">
+      <div class="stat">점수<b id="hudScore">0</b></div>
+      <div class="stat combo">연속<b id="hudCombo">0</b></div>
+      <div class="stat">남은<b id="hudLeft">0</b></div>
+      <div class="stat lives" id="hudLives">∞</div>
+    </div>
     <div class="sp"></div>
-    <button class="iconbtn" id="btnSpeed">보통</button>
-    <button class="iconbtn" id="btnSound">🔊</button>
-    <button class="iconbtn bgmoff" id="btnBGM">🎵</button>
-    <button class="iconbtn" id="btnPause">॥</button>
-    <button class="iconbtn" id="btnQuit">나가기</button>
+    <div class="tools">
+      <button class="iconbtn" id="btnSpeed">보통</button>
+      <button class="iconbtn" id="btnSound">소리</button>
+      <button class="iconbtn off" id="btnBGM">배경음</button>
+      <button class="iconbtn" id="btnPause">일시정지</button>
+      <button class="iconbtn" id="btnQuit">나가기</button>
+    </div>
   </div>
   <div id="stage">
     <div class="mapctl" id="mapCtl">
@@ -281,9 +311,13 @@ h1 em{font-style:normal;color:var(--amber)}
     <div id="labels"></div>
     <div id="toast"></div>
     <div id="pause"><h2>일시정지</h2>
+      <div class="pauseset">
+        <button class="iconbtn" id="btnSound2">소리</button>
+        <button class="iconbtn off" id="btnBGM2">배경음</button>
+      </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
         <button class="btn primary" id="btnResume">이어서 풀기</button>
-        <button class="btn" id="btnQuit2">지역 선택으로</button>
+        <button class="btn" id="btnQuit2">권역 선택으로</button>
       </div>
     </div>
   </div>
@@ -582,7 +616,7 @@ function drawMap(W,H,box,opts){
   }
   svg.appendChild(g);
   if(eqY!==null && !opts.thumb && H>60){
-    const t=el("text",{x:6,y:eqY-4,class:"eqlabel"}); t.textContent="적도 0°"; svg.appendChild(t);
+    const t=el("text",{x:12,y:eqY-5,class:"eqlabel"}); t.textContent="적도 0°"; svg.appendChild(t);
   }
   // 육지
   // 출제 범위 밖 나라를 먼저, 출제 범위(=클릭 가능) 나라를 그 위에 겹쳐 그린다.
@@ -717,8 +751,6 @@ function drawMap(W,H,box,opts){
       }
     });
     items.forEach(it=>{
-      labels.appendChild(el("rect",{x:it.x-it.w/2,y:it.y-it.h/2,width:it.w,height:it.h,
-        rx:it.h/2,ry:it.h/2,class:"plabel-bg"}));
       const t=el("text",{x:it.x,y:it.y+FS*0.35,class:"plabel","text-anchor":"middle"});
       t.textContent=it.name; labels.appendChild(t);
     });
@@ -740,7 +772,7 @@ function buildCards(){
     b.className="card"; b.dataset.r=k;
     b.innerHTML=`<div class="no">${r.tag}</div><h3>${r.ko}</h3>
       <div class="thumb"></div>
-      <div class="meta">${r.subs.map(s=>SUB[s].ko).join(" · ")}<br><span class="n">${countIn(r.subs)}개국</span> · ${r.note}</div>`;
+      <div class="meta"><span class="n">${countIn(r.subs)}</span>개국 · 소단원 <span class="n">${r.subs.length}</span>개<br>${r.subs.map(s=>SUB[s].ko).join(" · ")}</div>`;
     const box=unionBox(r.subs);
     const svg=drawMap(300,150,box,{targets:new Set(COUNTRIES.filter(c=>r.subs.includes(c.sub)).map(c=>c.key)),thumb:true});
     svg.querySelectorAll(".grat line").forEach(n=>n.remove());
@@ -762,15 +794,15 @@ function renderSetup(){
   const n=COUNTRIES.filter(c=>selSubs.has(c.sub)).length;
   setupEl.innerHTML=`
     <div class="set-head"><h2>${r.ko}</h2><span>${r.note}</span></div>
-    <div class="lbl">세부 범위 · 소단원 선택</div>
+    <div class="lbl">세부 범위</div>
     <div class="chips" id="subChips">${r.subs.map(s=>
       `<button class="chipbtn ${selSubs.has(s)?"on":""}" data-s="${s}">${SUB[s].ko}<small>${countIn([s])}</small></button>`).join("")}</div>
     <div class="lbl">모드</div>
     <div class="chips" id="modeChips">
-      <button class="chipbtn ${mode==="practice"?"on":""}" data-m="practice">연습 · 기회 무제한, 소권역 힌트</button>
-      <button class="chipbtn ${mode==="challenge"?"on":""}" data-m="challenge">도전 · 기회 5번, 힌트 없음</button>
+      <button class="chipbtn ${mode==="practice"?"on":""}" data-m="practice">연습 — 기회 제한 없음 · 소권역 표시</button>
+      <button class="chipbtn ${mode==="challenge"?"on":""}" data-m="challenge">도전 — 기회 5회 · 표시 없음</button>
     </div>
-    <div class="lbl">낙하 속도</div>
+    <div class="lbl">속도</div>
     <div class="chips" id="spdChips">
       ${[["slow","느리게"],["normal","보통"],["fast","빠르게"]].map(([v,t])=>
         `<button class="chipbtn ${speed===v?"on":""}" data-v="${v}">${t}</button>`).join("")}
@@ -954,15 +986,16 @@ const BGM=(()=>{
   };
 })();
 function syncBGMButtons(){
-  document.querySelectorAll("#btnBGM,#btnBGMHome").forEach(b=>{
-    b.classList.toggle("bgmon",BGM.on); b.classList.toggle("bgmoff",!BGM.on);
-    b.textContent = BGM.on ? "🎵 BGM" : "🎵 BGM";
+  document.querySelectorAll("#btnBGM,#btnBGMHome,#btnBGM2").forEach(b=>{
+    b.classList.toggle("on",BGM.on); b.classList.toggle("off",!BGM.on);
+    b.textContent = "배경음";
     b.setAttribute("aria-pressed",BGM.on);
   });
 }
 function toggleBGM(){ BGM.toggle(); syncBGMButtons(); }
 document.getElementById("btnBGMHome").onclick=toggleBGM;
 document.getElementById("btnBGM").onclick=toggleBGM;
+document.getElementById("btnBGM2").onclick=toggleBGM;
 syncBGMButtons();
 function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));}
 function toast(msg,ms=1400){ toastEl.textContent=msg; toastEl.classList.add("on");
@@ -1019,7 +1052,7 @@ function enterPeek(){
   // 아래 띠를 먼저 펼친 뒤에 지도를 그려야 한다. 반대로 하면 지도가 띠 높이만큼
   // 줄어들기 전 크기로 그려져서, 좌우에 빈 여백이 생기고 지도가 작아 보였다.
   renderStage();
-  toast("확대·이동해서 이름을 확인해보세요",2600);
+  toast("확대·이동하며 위치를 익혀보세요",2600);
   peekBar.querySelector("#pStart").onclick=()=>{ peekBar.style.display="none"; G.peek=false; startGame(G.keys); };
   peekBar.querySelector("#pNames").onclick=e=>{ G.namesOn=!G.namesOn; renderStage();
     e.target.textContent=G.namesOn?"이름 숨기기":"이름 보기"; };
@@ -1059,6 +1092,9 @@ function spawn(key,dur){
 function place(L){
   const H=G.H-70;
   let x=L.x*G.W, y=L.y*H;
+  // 이름표가 화면 좌우 끝에서 잘리지 않도록 폭의 절반만큼 안쪽으로 붙잡아 둔다.
+  const hw=(L.el.offsetWidth||0)/2;
+  if(hw) x=Math.max(hw+8, Math.min(G.W-hw-8, x));
   if(L.state==="fly"){ const k=Math.min(1,L.t/.34); x+=(L.tx-x)*k; y+=(L.ty-y)*k; }
   L.el.style.transform=`translate(-50%,0) translate(${x}px,${y}px)`+(L.state==="fly"?` scale(${1-.35*Math.min(1,L.t/.34)})`:"");
 }
@@ -1093,7 +1129,7 @@ function onMapClick(e){
   if(G.peek) return; // 확대/이동과 탭 구분은 stage 포인터 핸들러가 처리
   const k=e.target.dataset?e.target.dataset.k:"";
   const nm=e.target.dataset?e.target.dataset.n:"";
-  if(!k){ if(nm) toast(`${nm} · 이번 범위에는 없는 나라예요`); return; }
+  if(!k){ if(nm) toast(`${nm} · 출제 범위 밖입니다`); return; }
   const idx=G.labels.findIndex(l=>l.key===k && l.state==="fall");
   if(idx>=0){
     const L=G.labels[idx], c=BY_KEY[k];
@@ -1102,15 +1138,15 @@ function onMapClick(e){
     if(!G.tries[k]) G.ok.push(k);
     const q=centerOf(k); L.state="fly"; L.t=0; L.tx=q[0]; L.ty=q[1];
     L.el.classList.add("gone");
-    flash(k,"hit-ok",600); floatText(q[0],q[1],"+"+gain,"var(--mint)"); beep("ok");
-    if(G.combo>=3 && G.combo%3===0) toast(`${G.combo}연속 정답!`,900);
+    flash(k,"hit-ok",600); floatText(q[0],q[1],"+"+gain,"var(--ok)"); beep("ok");
+    if(G.combo>=5 && G.combo%5===0) toast(`연속 ${G.combo}`,900);
   }else if(G.targets.has(k)){
     G.tries[k]=(G.tries[k]||0)+1; G.bad[k]=(G.bad[k]||0)+1;
     G.combo=0; G.score=Math.max(0,G.score-20);
     flash(k,"hit-no",600); beep("no");
-    toast(`여기는 ${BY_KEY[k].ko}`);
+    toast(`${BY_KEY[k].ko} · 다시 찾아보세요`);
   }else{
-    toast(`${nm} · 이번 범위에는 없는 나라예요`);
+    toast(`${nm} · 출제 범위 밖입니다`);
   }
   hud();
 }
@@ -1119,8 +1155,8 @@ function miss(L,i){
   G.missed.add(k); G.tries[k]=(G.tries[k]||0)+1; G.combo=0;
   kill(L,i); beep("miss");
   flash(k,"reveal",1600);
-  const q=centerOf(k); floatText(q[0],q[1],c.ko,"var(--amber)");
-  toast(`놓쳤어요 — ${c.ko}`,1600);
+  const q=centerOf(k); floatText(q[0],q[1],c.ko,"var(--reveal)");
+  toast(`${c.ko} · 시간 초과`,1600);
   if(G.mode==="practice"){ G.queue.push(k); }
   else { G.lives--; if(G.lives<=0){ hud(); return finish(false); } }
   hud();
@@ -1129,7 +1165,10 @@ function hud(){
   document.getElementById("hudScore").textContent=G.score;
   document.getElementById("hudCombo").textContent=G.combo;
   document.getElementById("hudLeft").textContent=G.queue.length+G.labels.length;
-  document.getElementById("hudLives").textContent = G.mode==="challenge" ? "♥".repeat(Math.max(0,G.lives)) : "∞";
+  // 도전 모드의 남은 기회는 채워진 점 / 빈 점으로 보여준다(하트 이모지보다 차분하다).
+  const L=Math.max(0,G.lives);
+  document.getElementById("hudLives").textContent =
+    G.mode==="challenge" ? "●".repeat(L)+"○".repeat(Math.max(0,5-L)) : "∞";
 }
 function finish(cleared){
   G.done=true; cancelAnimationFrame(raf); stage.classList.remove("live");
@@ -1139,22 +1178,23 @@ function finish(cleared){
   const acc=total?Math.round(firstTry/total*100):0;
   document.getElementById("resBody").innerHTML=`
     <div class="verdict">${cleared?"범위 완주":"기회 소진"}</div>
-    <h2>${REGION[selRegion].ko} · ${[...selSubs].map(s=>SUB[s].ko).join(" · ")}</h2>
+    <h2>${REGION[selRegion].ko}</h2>
+    <p class="ressub">${[...selSubs].map(s=>SUB[s].ko).join(" · ")}</p>
     <div class="scoreboard">
       <div class="sb"><span>점수</span><b>${G.score}</b></div>
-      <div class="sb"><span>한 번에 맞힌 나라</span><b>${firstTry}<small style="font-size:15px;color:var(--dim)">/${total}</small></b></div>
+      <div class="sb"><span>한 번에 맞힘</span><b>${firstTry}<small style="font-size:15px;color:var(--dim)">/${total}</small></b></div>
       <div class="sb"><span>정확도</span><b>${acc}%</b></div>
       <div class="sb"><span>최고 연속</span><b>${G.best}</b></div>
     </div>
-    ${wrongKeys.length?`<div class="lbl">다시 볼 나라 ${wrongKeys.length}개</div><div class="list">${
+    ${wrongKeys.length?`<div class="lbl">다시 볼 나라 · ${wrongKeys.length}</div><div class="list">${
       wrongKeys.map(k=>`<span class="tag bad">${BY_KEY[k].ko}<small>${SUB[BY_KEY[k].sub].ko}</small></span>`).join("")}</div>`
       :`<div class="lbl">모두 한 번에 맞혔습니다</div>`}
-    ${G.ok.length?`<div class="lbl" style="margin-top:22px">한 번에 맞힌 나라</div><div class="list">${
+    ${G.ok.length?`<div class="lbl" style="margin-top:24px">한 번에 맞힌 나라</div><div class="list">${
       G.ok.map(k=>`<span class="tag good">${BY_KEY[k].ko}</span>`).join("")}</div>`:""}
     <div class="actions">
-      <button class="btn primary" id="again">같은 범위 다시</button>
+      <button class="btn primary" id="again">같은 범위 다시 풀기</button>
       ${wrongKeys.length?`<button class="btn" id="onlyBad">틀린 나라만 (${wrongKeys.length})</button>`:""}
-      <button class="btn" id="home2">지역 선택으로</button>
+      <button class="btn" id="home2">권역 선택으로</button>
     </div>`;
   show("result");
   document.getElementById("again").onclick=()=>startGame(targetKeys());
@@ -1165,18 +1205,28 @@ function goHome(){ if(G){G.done=true;} cancelAnimationFrame(raf); labelsEl.inner
   stage.classList.remove("live"); playEl.classList.remove("peekmode"); peekBar.style.display="none"; show("home"); }
 
 /* — 버튼 — */
-document.getElementById("btnPause").onclick=()=>{ G.paused=true; document.getElementById("pause").classList.add("on"); };
-document.getElementById("btnResume").onclick=()=>{ G.paused=false; G.last=performance.now(); document.getElementById("pause").classList.remove("on"); };
+document.getElementById("btnPause").onclick=()=>{ G.paused=true; mapCtl.style.visibility="hidden";
+  document.getElementById("pause").classList.add("on"); };
+document.getElementById("btnResume").onclick=()=>{ G.paused=false; G.last=performance.now(); mapCtl.style.visibility="";
+  document.getElementById("pause").classList.remove("on"); };
 document.getElementById("btnQuit").onclick=goHome;
-document.getElementById("btnQuit2").onclick=()=>{ document.getElementById("pause").classList.remove("on"); goHome(); };
-document.getElementById("btnSound").onclick=e=>{ soundOn=!soundOn; e.target.textContent=soundOn?"🔊":"🔇"; };
+document.getElementById("btnQuit2").onclick=()=>{ mapCtl.style.visibility="";
+  document.getElementById("pause").classList.remove("on"); goHome(); };
+function syncSoundButtons(){
+  document.querySelectorAll("#btnSound,#btnSound2").forEach(b=>{
+    b.classList.toggle("off",!soundOn); b.textContent=soundOn?"소리":"소리 끔";
+    b.setAttribute("aria-pressed",soundOn);
+  });
+}
+document.querySelectorAll("#btnSound,#btnSound2").forEach(b=>b.onclick=()=>{ soundOn=!soundOn; syncSoundButtons(); });
+syncSoundButtons();
 const SPEED_ORDER=["slow","normal","fast"], SPEED_LABEL={slow:"느리게",normal:"보통",fast:"빠르게"};
 function updateSpeedBtn(){ const b=document.getElementById("btnSpeed"); if(b) b.textContent=SPEED_LABEL[speed]; }
 document.getElementById("btnSpeed").onclick=()=>{
   speed=SPEED_ORDER[(SPEED_ORDER.indexOf(speed)+1)%SPEED_ORDER.length];
   if(G) G.speed=speed;
   updateSpeedBtn();
-  toast(`낙하 속도 · ${SPEED_LABEL[speed]}`,1000);
+  toast(`속도 · ${SPEED_LABEL[speed]}`,1000);
 };
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape" && document.getElementById("play").classList.contains("on") && G && !G.done){
